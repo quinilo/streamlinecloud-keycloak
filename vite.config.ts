@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     keycloakify({
       themeName: 'keycloakify-starter-svelte',
-      accountThemeImplementation: 'none',
+      accountThemeImplementation: 'Multi-Page',
     }),
   ],
 });
