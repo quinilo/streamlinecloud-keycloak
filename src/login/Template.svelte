@@ -101,13 +101,26 @@
                 {/if}
               </div>
             </div>
+
+            {#if displayInfo}
+              <div
+                id="kc-info"
+                class="my-3 text-gray-300"
+              >
+                <div
+                  id="kc-info-wrapper"
+                  class={kcClsx('kcInfoAreaWrapperClass')}
+                >
+                  {@render infoNode?.()}
+                </div>
+              </div>
+            {/if}
           {:else}
             <div
               id="kc-username"
               class={kcClsx('kcFormGroupClass')}
             >
-              <!-- svelte-ignore a11y_label_has_associated_control -->
-              <label id="kc-attempted-username">{auth.attemptedUsername}</label>
+
               <a
                 id="reset-login"
                 href={url.loginRestartFlowUrl}
@@ -118,6 +131,10 @@
                   <span class="kc-tooltip-text">{@render msg('restartLoginTooltip')()}</span>
                 </div>
               </a>
+
+              <!-- svelte-ignore a11y_label_has_associated_control -->
+              <span id="kc-attempted-username" class="input w-full my-1">{auth.attemptedUsername}</span>
+
             </div>
           {/if}
         {/snippet}
@@ -193,19 +210,6 @@
             </form>
           {/if}
           {@render socialProvidersNode?.()}
-          {#if displayInfo}
-            <div
-              id="kc-info"
-              class={kcClsx('kcSignUpClass')}
-            >
-              <div
-                id="kc-info-wrapper"
-                class={kcClsx('kcInfoAreaWrapperClass')}
-              >
-                {@render infoNode?.()}
-              </div>
-            </div>
-          {/if}
         </div>
       </div>
     </div>

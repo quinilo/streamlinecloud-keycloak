@@ -1,23 +1,23 @@
 <script lang="ts">
-  import type { PageProps } from '@keycloakify/svelte/login/pages/PageProps';
-  import { kcSanitize } from 'keycloakify/lib/kcSanitize';
-  import { getKcClsx } from 'keycloakify/login/lib/kcClsx';
-  import type { KcContext } from '../KcContext';
-  import type { I18n } from '../i18n';
+  import type { PageProps } from "@keycloakify/svelte/login/pages/PageProps";
+  import { kcSanitize } from "keycloakify/lib/kcSanitize";
+  import { getKcClsx } from "keycloakify/login/lib/kcClsx";
+  import type { KcContext } from "../KcContext";
+  import type { I18n } from "../i18n";
 
   const {
     Template,
     kcContext,
     i18n,
     doUseDefaultCss,
-    classes,
-  }: PageProps<Extract<KcContext, { pageId: 'login-reset-password.ftl' }>, I18n> = $props();
+    classes
+  }: PageProps<Extract<KcContext, { pageId: "login-reset-password.ftl" }>, I18n> = $props();
 
   const { kcClsx } = $derived(
     getKcClsx({
       doUseDefaultCss,
-      classes,
-    }),
+      classes
+    })
   );
 
   const { url, realm, auth, messagesPerField } = $derived(kcContext);
@@ -70,42 +70,39 @@
           type="text"
           id="username"
           name="username"
-          class={kcClsx('kcInputClass')}
+          class="input w-full"
           autofocus
           value={auth.attemptedUsername ?? ''}
           aria-invalid={messagesPerField.existsError('username')}
         />
         {#if messagesPerField.existsError('username')}
-          <span
-            id="input-error-username"
-            class={kcClsx('kcInputErrorMessageClass')}
-            aria-live="polite">{@html kcSanitize(messagesPerField.get('username'))}</span
-          >
+          <div class="alert alert-error alert-soft mt-2">
+            <span
+              id="input-error-username"
+              class={kcClsx('kcInputErrorMessageClass')}
+              aria-live="polite">{@html kcSanitize(messagesPerField.get('username'))}</span>
+          </div>
         {/if}
       </div>
     </div>
     <div class={kcClsx('kcFormGroupClass', 'kcFormSettingClass')}>
-      <div
-        id="kc-form-options"
-        class={kcClsx('kcFormOptionsClass')}
-      >
-        <div class={kcClsx('kcFormOptionsWrapperClass')}>
-          <span>
-            <a href={url.loginUrl}>{@render msg('backToLogin')()}</a>
-          </span>
-        </div>
-      </div>
 
       <div
         id="kc-form-buttons"
-        class={kcClsx('kcFormButtonsClass')}
+        class="flex justify-between mt-3"
       >
-        <input
-          class={kcClsx('kcButtonClass', 'kcButtonPrimaryClass', 'kcButtonBlockClass', 'kcButtonLargeClass')}
-          type="submit"
-          value={msgStr('doSubmit')}
-        />
+        <div class="w-[49%]">
+          <a href={url.loginUrl} class="btn btn-outline btn-primary w-full">{@render msg('backToLogin')()}</a>
+        </div>
+
+        <div class="w-[49%]">
+          <button
+            class="btn btn-primary w-full"
+            type="submit"
+          >{msgStr('doSubmit')}</button>
+        </div>
       </div>
+
     </div>
   </form>
 </Template>
