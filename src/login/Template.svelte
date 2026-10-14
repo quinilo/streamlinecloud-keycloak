@@ -1,0 +1,220 @@
+<script lang="ts">
+  import { useInitialize } from "@keycloakify/svelte/login/Template.useInitialize";
+  import type { TemplateProps } from "@keycloakify/svelte/login/TemplateProps";
+  import { useSetClassName } from "@keycloakify/svelte/tools/useSetClassName";
+  import { kcSanitize } from "keycloakify/lib/kcSanitize";
+  import { getKcClsx } from "keycloakify/login/lib/kcClsx";
+  import { clsx } from "keycloakify/tools/clsx";
+  import { onMount, untrack } from "svelte";
+  import type { I18n } from "./i18n";
+  import type { KcContext } from "./KcContext";
+
+  const {
+    displayInfo = false,
+    displayMessage = true,
+    displayRequiredFields = false,
+    headerNode,
+    socialProvidersNode = null,
+    infoNode = null,
+    documentTitle,
+    bodyClassName,
+    kcContext,
+    i18n,
+    doUseDefaultCss,
+    classes,
+    children
+  }: TemplateProps<KcContext, I18n> = $props();
+  const { kcClsx } = $derived(getKcClsx({ doUseDefaultCss, classes }));
+
+  const { msg, msgStr, currentLanguage, enabledLanguages } = $derived($i18n);
+
+  const { realm, auth, url, message, isAppInitiatedAction } = $derived(kcContext);
+
+  onMount(() => {
+    document.title =
+      documentTitle ?? untrack(() => msgStr("loginTitle", kcContext.realm.displayName || kcContext.realm.name));
+  });
+
+  useSetClassName({
+    qualifiedName: "html",
+    className: untrack(() => kcClsx("kcHtmlClass"))
+  });
+
+  useSetClassName({
+    qualifiedName: "body",
+    className: untrack(() => bodyClassName ?? kcClsx("kcBodyClass"))
+  });
+
+  const { isReadyToRender } = useInitialize({
+    kcContext: untrack(() => kcContext),
+    doUseDefaultCss: untrack(() => doUseDefaultCss)
+  });
+</script>
+
+{#if $isReadyToRender}
+  <div class={kcClsx('kcLoginClass')}>
+
+    <div id="kc-header" class="flex justify-center">
+
+      <div>
+
+        <img src="/streamlinecloud-logo.png" alt="StreamlineCloud Logo" class="max-w-[200px]">
+
+      </div>
+
+    </div>
+
+    <div class="bg-base-200 max-w-[400px] card mx-auto p-5">
+      <header class={kcClsx('kcFormHeaderClass')}>
+        {#snippet node()}
+          {#if !(auth !== undefined && auth.showUsername && !auth.showResetCredentials)}
+            <div class="flex justify-between">
+              <h1 id="kc-page-title">{@render headerNode?.()}</h1>
+
+              <div>
+                {#if enabledLanguages.length > 1}
+
+                  <div class="dropdown dropdown-bottom">
+                    <div tabindex="0"
+                         role="button"
+                         class=" m-1"
+                         id="kc-current-locale-link"
+                         aria-label={msgStr('languages')}>{currentLanguage.label}</div>
+                    <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                      {#each enabledLanguages as enabledLanguage, i (enabledLanguage.languageTag)}
+                        {@const { label, href } = enabledLanguage}
+                        <li
+                          role="none"
+                        >
+                          <a
+                            role="menuitem"
+                            id={`language-${i + 1}`}
+                            class={kcClsx('kcLocaleItemClass')}
+                            {href}
+                          >
+                            {label}
+                          </a>
+                        </li>
+                      {/each}
+                    </ul>
+                  </div>
+                {/if}
+              </div>
+            </div>
+          {:else}
+            <div
+              id="kc-username"
+              class={kcClsx('kcFormGroupClass')}
+            >
+              <!-- svelte-ignore a11y_label_has_associated_control -->
+              <label id="kc-attempted-username">{auth.attemptedUsername}</label>
+              <a
+                id="reset-login"
+                href={url.loginRestartFlowUrl}
+                aria-label={msgStr('restartLoginTooltip')}
+              >
+                <div class="kc-login-tooltip">
+                  <i class={kcClsx('kcResetFlowIcon')}></i>
+                  <span class="kc-tooltip-text">{@render msg('restartLoginTooltip')()}</span>
+                </div>
+              </a>
+            </div>
+          {/if}
+        {/snippet}
+        {#if displayRequiredFields}
+          <div class={kcClsx('kcContentWrapperClass')}>
+            <div class={clsx(kcClsx('kcLabelWrapperClass'), 'subtitle')}>
+              <span class="subtitle">
+                <span class="required">*</span>
+                {@render msg('requiredFields')()}
+              </span>
+            </div>
+            <div class="col-md-10">{@render node()}</div>
+          </div>
+        {:else}
+          {@render node()}
+        {/if}
+      </header>
+      <div id="kc-content">
+        <div id="kc-content-wrapper">
+          <!-- App-initiated actions should not see warning messages about the need to complete the action during login. -->
+          {#if displayMessage && message !== undefined && (message.type !== 'warning' || !isAppInitiatedAction)}
+            <div
+              class={clsx(
+                `alert-${message.type}`,
+                kcClsx('kcAlertClass'),
+                `pf-m-${message?.type === 'error' ? 'danger' : message.type}`,
+              )}
+            >
+              <div class="pf-c-alert__icon">
+                {#if message.type === 'success'}
+                  <span class={kcClsx('kcFeedbackSuccessIcon')}></span>
+                {:else if message.type === 'warning'}
+                  <span class={kcClsx('kcFeedbackWarningIcon')}></span>
+                {:else if message.type === 'error'}
+                  <span class={kcClsx('kcFeedbackErrorIcon')}></span>
+                {:else if message.type === 'info'}
+                  <span class={kcClsx('kcFeedbackInfoIcon')}></span>
+                {/if}
+              </div>
+              <span class={kcClsx('kcAlertTitleClass')}>{@html kcSanitize(message.summary)}</span>
+            </div>
+          {/if}
+          {@render children?.()}
+          {#if auth !== undefined && auth.showTryAnotherWayLink}
+            <form
+              id="kc-select-try-another-way-form"
+              action={url.loginAction}
+              method="post"
+            >
+              <div class={kcClsx('kcFormGroupClass')}>
+                <input
+                  type="hidden"
+                  name="tryAnotherWay"
+                  value="on"
+                />
+                <!-- svelte-ignore a11y_invalid_attribute -->
+                <a
+                  href="#"
+                  id="try-another-way"
+                  onclick={() => {
+                    document.forms['kc-select-try-another-way-form' as never].requestSubmit();
+                    return false;
+                  }}
+                >
+                  {@render msg('doTryAnotherWay')()}
+                </a>
+              </div>
+            </form>
+          {/if}
+          {@render socialProvidersNode?.()}
+          {#if displayInfo}
+            <div
+              id="kc-info"
+              class={kcClsx('kcSignUpClass')}
+            >
+              <div
+                id="kc-info-wrapper"
+                class={kcClsx('kcInfoAreaWrapperClass')}
+              >
+                {@render infoNode?.()}
+              </div>
+            </div>
+          {/if}
+        </div>
+      </div>
+    </div>
+
+    <footer class="fixed inset-x-0 bottom-0 p-4 text-center text-sm text-gray-500">
+      <div
+        id="kc-header-wrapper"
+        class="table-cell mb-9"
+      >
+        <span>realm:</span> {@render msg('loginTitleHtml', realm.displayNameHtml || realm.name)()}
+      </div>
+    </footer>
+
+
+
+  </div>
+{/if}
