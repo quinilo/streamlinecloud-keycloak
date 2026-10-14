@@ -146,18 +146,23 @@
                 `pf-m-${message?.type === 'error' ? 'danger' : message.type}`,
               )}
             >
-              <div class="pf-c-alert__icon">
-                {#if message.type === 'success'}
-                  <span class={kcClsx('kcFeedbackSuccessIcon')}></span>
-                {:else if message.type === 'warning'}
-                  <span class={kcClsx('kcFeedbackWarningIcon')}></span>
-                {:else if message.type === 'error'}
-                  <span class={kcClsx('kcFeedbackErrorIcon')}></span>
-                {:else if message.type === 'info'}
-                  <span class={kcClsx('kcFeedbackInfoIcon')}></span>
-                {/if}
-              </div>
-              <span class={kcClsx('kcAlertTitleClass')}>{@html kcSanitize(message.summary)}</span>
+              {#if message.type === 'success'}
+                <div class="alert alert-success alert-soft">
+                  <span class={kcClsx('kcAlertTitleClass')}>{@html kcSanitize(message.summary)}</span>
+                </div>
+              {:else if message.type === 'warning'}
+                <div class="alert alert-warning alert-soft">
+                  <span class={kcClsx('kcAlertTitleClass')}>{@html kcSanitize(message.summary)}</span>
+                </div>
+              {:else if message.type === 'error'}
+                <div class="alert alert-error alert-soft">
+                  <span class={kcClsx('kcAlertTitleClass')}>{@html kcSanitize(message.summary)}</span>
+                </div>
+              {:else if message.type === 'info'}
+                <div class="alert alert-info alert-soft">
+                  <span class={kcClsx('kcAlertTitleClass')}>{@html kcSanitize(message.summary)}</span>
+                </div>
+              {/if}
             </div>
           {/if}
           {@render children?.()}
@@ -213,7 +218,6 @@
         <span>realm:</span> {@render msg('loginTitleHtml', realm.displayNameHtml || realm.name)()}
       </div>
     </footer>
-
 
 
   </div>
