@@ -12,17 +12,14 @@
   id="kc-form-options"
   class={kcClsx('kcFormOptionsClass')}
 >
-  <div class={kcClsx('kcFormOptionsWrapperClass')}>
-    <div class="checkbox">
-      <label>
-        <input
-          type="checkbox"
-          id="logout-sessions"
-          name="logout-sessions"
-          value="on"
-        />
-        {@render msg('logoutOtherSessions')()}
-      </label>
-    </div>
-  </div>
+  <label class="label my-2">
+    <input
+      type="checkbox"
+      id="logout-sessions"
+      name="logout-sessions"
+      class="checkbox"
+      value="on"
+    />
+    {@render msg('logoutOtherSessions')()}
+  </label>
 </div>

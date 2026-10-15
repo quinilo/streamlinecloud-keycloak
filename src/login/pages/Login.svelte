@@ -1,27 +1,27 @@
 <script lang="ts">
-  import PasswordWrapper from "@keycloakify/svelte/login/components/PasswordWrapper.svelte";
-  import type { PageProps } from "@keycloakify/svelte/login/pages/PageProps";
-  import { useState } from "@keycloakify/svelte/tools/useState";
-  import { kcSanitize } from "keycloakify/lib/kcSanitize";
-  import { getKcClsx } from "keycloakify/login/lib/kcClsx";
-  import { clsx } from "keycloakify/tools/clsx";
-  import { untrack } from "svelte";
-  import type { I18n } from "../i18n";
-  import type { KcContext } from "../KcContext";
-  import { useScript } from "@keycloakify/svelte/login/pages/Login.useScript";
+  import PasswordWrapper from '@keycloakify/svelte/login/components/PasswordWrapper.svelte';
+  import type { PageProps } from '@keycloakify/svelte/login/pages/PageProps';
+  import { useState } from '@keycloakify/svelte/tools/useState';
+  import { kcSanitize } from 'keycloakify/lib/kcSanitize';
+  import { getKcClsx } from 'keycloakify/login/lib/kcClsx';
+  import { clsx } from 'keycloakify/tools/clsx';
+  import { untrack } from 'svelte';
+  import type { I18n } from '../i18n';
+  import type { KcContext } from '../KcContext';
+  import { useScript } from '@keycloakify/svelte/login/pages/Login.useScript';
 
   const {
     kcContext,
     i18n,
     doUseDefaultCss,
     Template,
-    classes
-  }: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n> = $props();
+    classes,
+  }: PageProps<Extract<KcContext, { pageId: 'login.ftl' }>, I18n> = $props();
   const { kcClsx } = $derived(
     getKcClsx({
       doUseDefaultCss,
-      classes
-    })
+      classes,
+    }),
   );
 
   const {
@@ -34,19 +34,19 @@
     registrationDisabled,
     messagesPerField,
     enableWebAuthnConditionalUI,
-    authenticators
+    authenticators,
   } = $derived(kcContext);
 
   const { msg, msgStr } = $derived($i18n);
 
   const [isLoginButtonDisabled, setIsLoginButtonDisabled] = useState(false);
 
-  const webAuthnButtonId = "authenticateWebAuthnButton";
+  const webAuthnButtonId = 'authenticateWebAuthnButton';
 
   useScript({
     webAuthnButtonId,
     kcContext: untrack(() => kcContext),
-    i18n: untrack(() => i18n)
+    i18n: untrack(() => i18n),
   });
 </script>
 
@@ -105,7 +105,7 @@
                   ></i>
                 {/if}
                 <span class={clsx(kcClsx('kcFormSocialAccountNameClass'), p.iconClasses && 'kc-social-icon-text')}
-                >{@html kcSanitize(p.displayName)}</span
+                  >{@html kcSanitize(p.displayName)}</span
                 >
               </a>
             </li>
@@ -127,7 +127,6 @@
           method="post"
         >
           {#if !usernameHidden}
-
             <fieldset class="fieldset w-full">
               <label
                 class="label"
@@ -161,7 +160,6 @@
                 >
               {/if}
             </fieldset>
-
           {/if}
 
           <fieldset class="fieldset">
@@ -195,13 +193,11 @@
                 aria-live="polite">{@html kcSanitize(messagesPerField.getFirstError('username', 'password'))}</span
               >
             {/if}
-
           </fieldset>
 
           <div class={kcClsx('kcFormGroupClass', 'kcFormSettingClass')}>
             <div id="kc-form-options">
               {#if realm.rememberMe && !usernameHidden}
-
                 <label class="label">
                   <input
                     type="checkbox"
@@ -238,14 +234,14 @@
             </button>
 
             {#if realm.resetPasswordAllowed}
-                <span class="mt-5">
-                  <a
-                    tabindex={6}
-                    href={url.loginResetCredentialsUrl}
-                  >
-                    {@render msg('doForgotPassword')()}
-                  </a>
-                </span>
+              <span class="mt-5">
+                <a
+                  tabindex={6}
+                  href={url.loginResetCredentialsUrl}
+                >
+                  {@render msg('doForgotPassword')()}
+                </a>
+              </span>
             {/if}
           </div>
         </form>

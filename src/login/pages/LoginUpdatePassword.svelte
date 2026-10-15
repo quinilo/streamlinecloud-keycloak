@@ -1,6 +1,6 @@
 <script lang="ts">
-  import LogoutOtherSessions from '@keycloakify/svelte/login/components/LogoutOtherSessions.svelte';
-  import PasswordWrapper from '@keycloakify/svelte/login/components/PasswordWrapper.svelte';
+  import LogoutOtherSessions from '../components/LogoutOtherSessions.svelte';
+  import PasswordWrapper from '../components/PasswordWrapper.svelte';
   import type { PageProps } from '@keycloakify/svelte/login/pages/PageProps';
   import { kcSanitize } from 'keycloakify/lib/kcSanitize';
   import { getKcClsx } from 'keycloakify/login/lib/kcClsx';
@@ -63,7 +63,7 @@
             type="password"
             id="password-new"
             name="password-new"
-            class={kcClsx('kcInputClass')}
+            class="w-full"
             autofocus
             autocomplete="new-password"
             aria-invalid={messagesPerField.existsError('password', 'password-confirm')}
@@ -71,11 +71,13 @@
         </PasswordWrapper>
 
         {#if messagesPerField.existsError('password')}
-          <span
-            id="input-error-password"
-            class={kcClsx('kcInputErrorMessageClass')}
-            aria-live="polite">{@html kcSanitize(messagesPerField.get('password'))}</span
-          >
+          <div class="alert alert-error alert-soft mt-1">
+            <span
+              id="input-error-password"
+              class={kcClsx('kcInputErrorMessageClass')}
+              aria-live="polite">{@html kcSanitize(messagesPerField.get('password'))}</span
+            >
+          </div>
         {/if}
       </div>
     </div>
@@ -100,7 +102,7 @@
             type="password"
             id="password-confirm"
             name="password-confirm"
-            class={kcClsx('kcInputClass')}
+            class="input w-full"
             autofocus
             autocomplete="new-password"
             aria-invalid={messagesPerField.existsError('password', 'password-confirm')}
@@ -108,11 +110,13 @@
         </PasswordWrapper>
 
         {#if messagesPerField.existsError('password-confirm')}
-          <span
-            id="input-error-password-confirm"
-            class={kcClsx('kcInputErrorMessageClass')}
-            aria-live="polite">{@html kcSanitize(messagesPerField.get('password-confirm'))}</span
-          >
+          <div class="alert alert-error alert-soft mt-1">
+            <span
+              id="input-error-password-confirm"
+              class={kcClsx('kcInputErrorMessageClass')}
+              aria-live="polite">{@html kcSanitize(messagesPerField.get('password-confirm'))}</span
+            >
+          </div>
         {/if}
       </div>
     </div>
@@ -126,12 +130,7 @@
         class={kcClsx('kcFormButtonsClass')}
       >
         <input
-          class={kcClsx(
-            'kcButtonClass',
-            'kcButtonPrimaryClass',
-            !isAppInitiatedAction && 'kcButtonBlockClass',
-            'kcButtonLargeClass',
-          )}
+          class="btn btn-primary w-full"
           type="submit"
           value={msgStr('doSubmit')}
         />
