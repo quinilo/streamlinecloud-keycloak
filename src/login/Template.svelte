@@ -1,13 +1,14 @@
 <script lang="ts">
-  import { useInitialize } from "@keycloakify/svelte/login/Template.useInitialize";
-  import type { TemplateProps } from "@keycloakify/svelte/login/TemplateProps";
-  import { useSetClassName } from "@keycloakify/svelte/tools/useSetClassName";
-  import { kcSanitize } from "keycloakify/lib/kcSanitize";
-  import { getKcClsx } from "keycloakify/login/lib/kcClsx";
-  import { clsx } from "keycloakify/tools/clsx";
-  import { onMount, untrack } from "svelte";
-  import type { I18n } from "./i18n";
-  import type { KcContext } from "./KcContext";
+  import { useInitialize } from '@keycloakify/svelte/login/Template.useInitialize';
+  import type { TemplateProps } from '@keycloakify/svelte/login/TemplateProps';
+  import { useSetClassName } from '@keycloakify/svelte/tools/useSetClassName';
+  import { kcSanitize } from 'keycloakify/lib/kcSanitize';
+  import { getKcClsx } from 'keycloakify/login/lib/kcClsx';
+  import { clsx } from 'keycloakify/tools/clsx';
+  import { onMount, untrack } from 'svelte';
+  import type { I18n } from './i18n';
+  import type { KcContext } from './KcContext';
+  import logoUrl from './assets/streamlinecloud-logo.png';
 
   const {
     displayInfo = false,
@@ -22,7 +23,7 @@
     i18n,
     doUseDefaultCss,
     classes,
-    children
+    children,
   }: TemplateProps<KcContext, I18n> = $props();
   const { kcClsx } = $derived(getKcClsx({ doUseDefaultCss, classes }));
 
@@ -32,36 +33,38 @@
 
   onMount(() => {
     document.title =
-      documentTitle ?? untrack(() => msgStr("loginTitle", kcContext.realm.displayName || kcContext.realm.name));
+      documentTitle ?? untrack(() => msgStr('loginTitle', kcContext.realm.displayName || kcContext.realm.name));
   });
 
   useSetClassName({
-    qualifiedName: "html",
-    className: untrack(() => kcClsx("kcHtmlClass"))
+    qualifiedName: 'html',
+    className: untrack(() => kcClsx('kcHtmlClass')),
   });
 
   useSetClassName({
-    qualifiedName: "body",
-    className: untrack(() => bodyClassName ?? kcClsx("kcBodyClass"))
+    qualifiedName: 'body',
+    className: untrack(() => bodyClassName ?? kcClsx('kcBodyClass')),
   });
 
   const { isReadyToRender } = useInitialize({
     kcContext: untrack(() => kcContext),
-    doUseDefaultCss: untrack(() => doUseDefaultCss)
+    doUseDefaultCss: untrack(() => doUseDefaultCss),
   });
 </script>
 
 {#if $isReadyToRender}
   <div class={kcClsx('kcLoginClass')}>
-
-    <div id="kc-header" class="flex justify-center">
-
+    <div
+      id="kc-header"
+      class="flex justify-center"
+    >
       <div>
-
-        <img src="/streamlinecloud-logo.png" alt="StreamlineCloud Logo" class="max-w-[200px]">
-
+        <img
+          src={logoUrl}
+          alt="StreamlineCloud Logo"
+          class="max-w-[200px]"
+        />
       </div>
-
     </div>
 
     <div class="bg-base-200 max-w-[400px] card mx-auto p-5">
@@ -73,19 +76,23 @@
 
               <div>
                 {#if enabledLanguages.length > 1}
-
                   <div class="dropdown dropdown-bottom">
-                    <div tabindex="0"
-                         role="button"
-                         class=" m-1"
-                         id="kc-current-locale-link"
-                         aria-label={msgStr('languages')}>{currentLanguage.label}</div>
-                    <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                    <div
+                      tabindex="0"
+                      role="button"
+                      class=" m-1"
+                      id="kc-current-locale-link"
+                      aria-label={msgStr('languages')}
+                    >
+                      {currentLanguage.label}
+                    </div>
+                    <ul
+                      tabindex="-1"
+                      class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+                    >
                       {#each enabledLanguages as enabledLanguage, i (enabledLanguage.languageTag)}
                         {@const { label, href } = enabledLanguage}
-                        <li
-                          role="none"
-                        >
+                        <li role="none">
                           <a
                             role="menuitem"
                             id={`language-${i + 1}`}
@@ -120,7 +127,6 @@
               id="kc-username"
               class={kcClsx('kcFormGroupClass')}
             >
-
               <a
                 id="reset-login"
                 href={url.loginRestartFlowUrl}
@@ -133,8 +139,10 @@
               </a>
 
               <!-- svelte-ignore a11y_label_has_associated_control -->
-              <span id="kc-attempted-username" class="input w-full my-1">{auth.attemptedUsername}</span>
-
+              <span
+                id="kc-attempted-username"
+                class="input w-full my-1">{auth.attemptedUsername}</span
+              >
             </div>
           {/if}
         {/snippet}
@@ -219,10 +227,9 @@
         id="kc-header-wrapper"
         class="table-cell mb-9"
       >
-        <span>realm:</span> {@render msg('loginTitleHtml', realm.displayNameHtml || realm.name)()}
+        <span>realm:</span>
+        {@render msg('loginTitleHtml', realm.displayNameHtml || realm.name)()}
       </div>
     </footer>
-
-
   </div>
 {/if}
