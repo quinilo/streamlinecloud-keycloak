@@ -8,7 +8,7 @@
   import { onMount, untrack } from 'svelte';
   import type { I18n } from './i18n';
   import type { KcContext } from './KcContext';
-  import logoUrl from './assets/streamlinecloud-logo.png';
+  import logoUrl from '../assets/streamlinecloud-logo.png';
 
   const {
     displayInfo = false,
