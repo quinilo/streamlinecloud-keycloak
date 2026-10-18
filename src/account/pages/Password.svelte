@@ -60,6 +60,22 @@
       setNewPasswordConfirmError('');
     }
   };
+
+  function buildLoginUrl(action: string) {
+    const realm = kcContext.realm.name;
+    const accountUrl: string = kcContext.url.accountUrl;
+    const base = accountUrl.split(`/realms/${realm}`)[0];
+
+    const params = new URLSearchParams({
+      client_id: 'account',
+      redirect_uri: accountUrl,
+      response_type: 'code',
+      scope: 'openid',
+      kc_action: action,
+    });
+
+    return `${base}/realms/${realm}/protocol/openid-connect/auth?${params}`;
+  }
 </script>
 
 <!-- check message reactivity -->
@@ -91,145 +107,12 @@
 >
   <div class="row">
     <div class="col-md-10">
-      <h2>{@render msg('changePasswordHtmlTitle')()}</h2>
-    </div>
-    <div class="col-md-2 subtitle">
-      <span class="subtitle">{@render msg('allFieldsRequired')()}</span>
+      <h2 class="text-xl my-5">{@render msg('changePasswordHtmlTitle')()}</h2>
     </div>
   </div>
 
-  <form
-    action={url.passwordUrl}
-    class="form-horizontal"
-    method="post"
+  <a
+    class="btn btn-primary"
+    href={buildLoginUrl('UPDATE_PASSWORD')}>{@render msg('changePasswordHtmlTitle')()}</a
   >
-    <input
-      type="text"
-      id="username"
-      name="username"
-      value={account.username ?? ''}
-      autocomplete="username"
-      readonly
-      style:display="none"
-    />
-
-    {#if password.passwordSet}
-      <div class="form-group">
-        <div class="col-sm-2 col-md-2">
-          <label
-            for="password"
-            class="control-label"
-          >
-            {@render msg('password')()}
-          </label>
-        </div>
-        <div class="col-sm-10 col-md-10">
-          <!-- svelte-ignore a11y_autofocus -->
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            name="password"
-            autofocus
-            autocomplete="current-password"
-            value={$currentPassword}
-            onchange={(event) => setCurrentPassword(event.currentTarget.value)}
-          />
-        </div>
-      </div>
-    {/if}
-
-    <input
-      type="hidden"
-      id="stateChecker"
-      name="stateChecker"
-      value={stateChecker}
-    />
-
-    <div class="form-group">
-      <div class="col-sm-2 col-md-2">
-        <label
-          for="password-new"
-          class="control-label"
-        >
-          {@render msg('passwordNew')()}
-        </label>
-      </div>
-      <div class="col-sm-10 col-md-10">
-        <input
-          type="password"
-          class="form-control"
-          id="password-new"
-          name="password-new"
-          autocomplete="new-password"
-          value={$newPassword}
-          onchange={(event) => {
-            const newPassword = event.currentTarget.value;
-
-            setNewPassword(newPassword);
-            if ($hasNewPasswordBlurred) {
-              checkNewPassword(newPassword, $currentPassword);
-            }
-          }}
-          onblur={() => {
-            setHasNewPasswordBlurred(true);
-            checkNewPassword($newPassword, $currentPassword);
-          }}
-        />
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="col-sm-2 col-md-2">
-        <label
-          for="password-confirm"
-          class="control-label two-lines"
-        >
-          {@render msg('passwordConfirm')()}
-        </label>
-      </div>
-
-      <div class="col-sm-10 col-md-10">
-        <input
-          type="password"
-          class="form-control"
-          id="password-confirm"
-          name="password-confirm"
-          autocomplete="new-password"
-          value={$newPasswordConfirm}
-          onchange={(event) => {
-            const newPasswordConfirm = event.currentTarget.value;
-
-            setNewPasswordConfirm(newPasswordConfirm);
-            if ($hasNewPasswordConfirmBlurred) {
-              checkNewPasswordConfirm(newPasswordConfirm, $newPassword);
-            }
-          }}
-          onblur={() => {
-            setHasNewPasswordConfirmBlurred(true);
-            checkNewPasswordConfirm($newPasswordConfirm, $newPassword);
-          }}
-        />
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div
-        id="kc-form-buttons"
-        class="col-md-offset-2 col-md-10 submit"
-      >
-        <div>
-          <button
-            disabled={$newPasswordError !== '' || $newPasswordConfirmError !== ''}
-            type="submit"
-            class={kcClsx('kcButtonClass', 'kcButtonPrimaryClass', 'kcButtonLargeClass')}
-            name="submitAction"
-            value="Save"
-          >
-            {@render msg('doSave')()}
-          </button>
-        </div>
-      </div>
-    </div>
-  </form>
 </Template>

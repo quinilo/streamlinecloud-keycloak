@@ -28,6 +28,22 @@
   const { url, realm, messagesPerField, stateChecker, account, referrer } = $derived(kcContext);
 
   const { msg } = $derived($i18n);
+
+  function buildLoginUrl(action: string) {
+    const realm = kcContext.realm.name;
+    const accountUrl: string = kcContext.url.accountUrl;
+    const base = accountUrl.split(`/realms/${realm}`)[0];
+
+    const params = new URLSearchParams({
+      client_id: 'account',
+      redirect_uri: accountUrl,
+      response_type: 'code',
+      scope: 'openid',
+      kc_action: action,
+    });
+
+    return `${base}/realms/${realm}/protocol/openid-connect/auth?${params}`;
+  }
 </script>
 
 <Template
@@ -37,148 +53,79 @@
   {classes}
   active="account"
 >
-  <div class="row">
-    <div class="col-md-10">
-      <h2>{@render msg('editAccountHtmlTitle')()}</h2>
+  <div class="max-w-[600px]">
+    <div class="row">
+      <div class="col-md-10">
+        <h2 class="text-xl my-5">{@render msg('editAccountHtmlTitle')()}</h2>
+      </div>
     </div>
-    <div class="col-md-2 subtitle">
-      <span class="subtitle">
-        <span class="required">*</span>
-        {@render msg('requiredFields')()}
-      </span>
-    </div>
-  </div>
 
-  <form
-    action={url.accountUrl}
-    class="form-horizontal"
-    method="post"
-  >
-    <input
-      type="hidden"
-      id="stateChecker"
-      name="stateChecker"
-      value={stateChecker}
-    />
+    <m
+      action={url.accountUrl}
+      class="form-horizontal"
+      method="post"
+    >
+      <input
+        type="hidden"
+        id="stateChecker"
+        name="stateChecker"
+        value={stateChecker}
+      />
 
-    {#if !realm.registrationEmailAsUsername}
-      <div class={clsx('form-group', messagesPerField.printIfExists('username', 'has-error'))}>
+      <label
+        for="username"
+        class="control-label"
+      >
+        {@render msg('username')()}
+      </label>
+      <input
+        type="text"
+        class="input w-full"
+        id="username"
+        name="username"
+        disabled
+        value={account.username ?? ''}
+      />
+
+      <div class={clsx('form-group', messagesPerField.printIfExists('email', 'has-error'))}>
         <div class="col-sm-2 col-md-2">
           <label
-            for="username"
+            for="email"
             class="control-label"
           >
-            {@render msg('username')()}
-          </label>
-          {#if realm.editUsernameAllowed}<span class="required">*</span>{/if}
+            {@render msg('email')()}
+          </label>&nbsp;
+          <span class="required">*</span>
         </div>
 
         <div class="col-sm-10 col-md-10">
+          <!-- svelte-ignore a11y_autofocus -->
           <input
             type="text"
-            class="form-control"
-            id="username"
-            name="username"
-            disabled={!realm.editUsernameAllowed}
-            value={account.username ?? ''}
+            class="input w-full"
+            disabled
+            id="email"
+            name="email"
+            autofocus
+            value={account.email ?? ''}
           />
         </div>
       </div>
-    {/if}
+    </m>
 
-    <div class={clsx('form-group', messagesPerField.printIfExists('email', 'has-error'))}>
-      <div class="col-sm-2 col-md-2">
-        <label
-          for="email"
-          class="control-label"
-        >
-          {@render msg('email')()}
-        </label>&nbsp;
-        <span class="required">*</span>
-      </div>
-
-      <div class="col-sm-10 col-md-10">
-        <!-- svelte-ignore a11y_autofocus -->
-        <input
-          type="text"
-          class="form-control"
-          id="email"
-          name="email"
-          autofocus
-          value={account.email ?? ''}
-        />
-      </div>
-    </div>
-
-    <div class={clsx('form-group', messagesPerField.printIfExists('firstName', 'has-error'))}>
-      <div class="col-sm-2 col-md-2">
-        <label
-          for="firstName"
-          class="control-label"
-        >
-          {@render msg('firstName')()}
-        </label>&nbsp;
-        <span class="required">*</span>
-      </div>
-
-      <div class="col-sm-10 col-md-10">
-        <input
-          type="text"
-          class="form-control"
-          id="firstName"
-          name="firstName"
-          value={account.firstName ?? ''}
-        />
-      </div>
-    </div>
-
-    <div class={clsx('form-group', messagesPerField.printIfExists('lastName', 'has-error'))}>
-      <div class="col-sm-2 col-md-2">
-        <label
-          for="lastName"
-          class="control-label"
-        >
-          {@render msg('lastName')()}
-        </label>&nbsp;
-        <span class="required">*</span>
-      </div>
-
-      <div class="col-sm-10 col-md-10">
-        <input
-          type="text"
-          class="form-control"
-          id="lastName"
-          name="lastName"
-          value={account.lastName ?? ''}
-        />
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div
-        id="kc-form-buttons"
-        class="col-md-offset-2 col-md-10 submit"
+    <div class="mt-2">
+      <a
+        href={buildLoginUrl('delete_account')}
+        class="btn btn-error"
       >
-        <div>
-          {#if referrer !== undefined}<a href={referrer?.url}>{@render msg('backToApplication')()}</a>{/if}
-          <button
-            type="submit"
-            class={kcClsx('kcButtonClass', 'kcButtonPrimaryClass', 'kcButtonLargeClass')}
-            name="submitAction"
-            value="Save"
-          >
-            {@render msg('doSave')()}
-          </button>
-          <button
-            type="submit"
-            class={kcClsx('kcButtonClass', 'kcButtonDefaultClass', 'kcButtonLargeClass')}
-            name="submitAction"
-            value="Cancel"
-          >
-            {@render msg('doCancel')()}
-          </button>
-        </div>
-      </div>
+        Delete Account
+      </a>
+      <a
+        href={buildLoginUrl('UPDATE_PROFILE')}
+        class="btn btn-error"
+      >
+        Update Personal Information
+      </a>
     </div>
-  </form>
+  </div>
 </Template>
