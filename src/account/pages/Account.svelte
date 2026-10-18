@@ -115,16 +115,20 @@
 
     <div class="mt-2">
       <a
-        href={buildLoginUrl('delete_account')}
-        class="btn btn-error"
+        href={buildLoginUrl('UPDATE_PROFILE')}
+        class="btn btn-primary"
       >
-        Delete Account
+        {@render msg('editAccountHtmlTitle')()}
       </a>
       <a
-        href={buildLoginUrl('UPDATE_PROFILE')}
-        class="btn btn-error"
+        class="btn btn-primary"
+        href={buildLoginUrl('UPDATE_PASSWORD')}>{@render msg('changePasswordHtmlTitle')()}</a
       >
-        Update Personal Information
+      <a
+        href={buildLoginUrl('delete_account')}
+        class="btn btn-error btn-soft"
+      >
+        Delete Account
       </a>
     </div>
   </div>

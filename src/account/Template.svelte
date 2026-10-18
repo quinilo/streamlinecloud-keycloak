@@ -161,7 +161,7 @@
               <span class="is-drawer-close:hidden">{@render msg('account')()}</span></a
             >
           </li>
-
+          <!--
           {#if features.passwordUpdateSupported}
             <li class={clsx(active === 'password' && 'active')}>
               <a
@@ -183,6 +183,7 @@
               >
             </li>
           {/if}
+          -->
           <li class={clsx(active === 'totp' && 'active')}>
             <a
               href={url.totpUrl}
